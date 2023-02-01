@@ -9,6 +9,8 @@ In questa repository sono presenti diversi file SQL per creare e popolare una ba
 CREATE SCHEMA "Schema_Progetto"
     AUTHORIZATION postgres;
 ```
+Questo file serve per la creazione dello schema del database che verrà utilizzato. 
+
 
 **CodiceF.SQL**:
 ```
@@ -17,6 +19,8 @@ CREATE DOMAIN "Schema_Progetto"."CodiceF"
 
 ALTER DOMAIN "Schema_Progetto"."CodiceF" OWNER TO postgres;
 ```
+Questo file serve per creare il dominio per il tipo del codice fiscale degli impiegati.
+
 
 **CodiceP.SQL**:
 ```
@@ -25,6 +29,8 @@ CREATE DOMAIN "Schema_Progetto"."CodiceP"
 
 ALTER DOMAIN "Schema_Progetto"."CodiceP" OWNER TO postgres;
 ```
+Questo file serve per creare il dominio per il tipo del CUP dei progetti.
+
 **CodiceL.SQL**
 ```
 CREATE DOMAIN "Schema_Progetto"."CodiceL"
@@ -32,6 +38,8 @@ CREATE DOMAIN "Schema_Progetto"."CodiceL"
 
 ALTER DOMAIN "Schema_Progetto"."CodiceL" OWNER TO postgres;
 ```
+Questo file serve per creare il dominio per il tipo del codice dei laboratori.
+
 
 **Junior.SQL**:
 ```
