@@ -4,6 +4,35 @@ Progetto per l'esame base di dati
 
 In questa repository sono presenti diversi file SQL per creare e popolare una base di dati seguendo  i requisiti richiesti dalla traccia d'esame
 
+**Schema_Progetto.SQL**:
+```
+CREATE SCHEMA "Schema_Progetto"
+    AUTHORIZATION postgres;
+```
+
+**CodiceF.SQL**:
+```
+CREATE DOMAIN "Schema_Progetto"."CodiceF"
+    AS character(8);
+
+ALTER DOMAIN "Schema_Progetto"."CodiceF" OWNER TO postgres;
+```
+
+**CodiceP.SQL**:
+```
+CREATE DOMAIN "Schema_Progetto"."CodiceP"
+    AS character(3);
+
+ALTER DOMAIN "Schema_Progetto"."CodiceP" OWNER TO postgres;
+```
+**CodiceL.SQL**
+```
+CREATE DOMAIN "Schema_Progetto"."CodiceL"
+    AS character(2);
+
+ALTER DOMAIN "Schema_Progetto"."CodiceL" OWNER TO postgres;
+```
+
 **Junior.SQL**:
 ```
 CREATE TABLE "Schema_Progetto".Junior
