@@ -51,4 +51,44 @@ Anni_Servizio INTEGER NOT NULL,
 CONSTRAINT JuniorPK PRIMARY KEY(CF)
 );
 ```
-Questo file  permette di creare una tabella Junior nello schema creato in precedenza.CF è la chiave primaria e rappresenta un codice fiscale ed inoltre ogni attributo è NOT NULL perchè non si vuole avere un impiegato senza questi valori(es:avere un impiegato senza nome e cognome oppure senza anni di servizio non sarebbe adatto per ciò che la base di dati deve svolgere)
+Questo file  permette di creare una tabella Junior nello schema creato in precedenza.CF è la chiave primaria e rappresenta un codice fiscale ed inoltre ogni attributo è NOT NULL perchè non si vuole avere un impiegato senza questi valori(es:avere un impiegato senza nome e cognome oppure senza anni di servizio non sarebbe adatto per ciò che la base di dati deve svolgere).
+
+**Middle.SQL**
+```
+CREATE TABLE "Schema_Progetto".Middle
+( CF "Schema_Progetto"."CodiceF",
+Nome VARCHAR(8) NOT NULL,
+Cognome VARCHAR(14) NOT NULL,
+Anni_Servizio INTEGER NOT NULL,
+CONSTRAINT MiddlePK PRIMARY KEY(CF)
+);
+```
+Questo file  permette di creare una tabella Middle nello schema creato in precedenza.CF è la chiave primaria e rappresenta un codice fiscale ed inoltre ogni attributo è NOT NULL perchè non si vuole avere un impiegato senza questi valori(es:avere un impiegato senza nome e cognome oppure senza anni di servizio non sarebbe adatto per ciò che la base di dati deve svolgere).
+
+**Senior.SQL**:
+```
+CREATE TABLE "Schema_Progetto".Senior
+( CF "Schema_Progetto"."CodiceF",
+Nome VARCHAR(8) NOT NULL,
+Cognome VARCHAR(14) NOT NULL,
+Anni_Servizio INTEGER NOT NULL,
+CONSTRAINT JuniorPK PRIMARY KEY(CF)
+);
+```
+Questo file  permette di creare una tabella Senior nello schema creato in precedenza.CF è la chiave primaria e rappresenta un codice fiscale ed inoltre ogni attributo è NOT NULL perchè non si vuole avere un impiegato senza questi valori(es:avere un impiegato senza nome e cognome oppure senza anni di servizio non sarebbe adatto per ciò che la base di dati deve svolgere).
+
+
+
+**Dirigente.SQL**:
+```
+CREATE TABLE "Schema_Progetto".Junior
+( CF "Schema_Progetto"."CodiceF",
+Nome VARCHAR(8) NOT NULL,
+Cognome VARCHAR(14) NOT NULL,
+Anni_Servizio INTEGER NOT NULL,
+CONSTRAINT JuniorPK PRIMARY KEY(CF)
+);
+```
+Questo file  permette di creare una tabella Dirigente nello schema creato in precedenza.CF è la chiave primaria e rappresenta un codice fiscale ed inoltre ogni attributo è NOT NULL perchè non si vuole avere un impiegato senza questi valori(es:avere un impiegato senza nome e cognome oppure senza anni di servizio non sarebbe adatto per ciò che la base di dati deve svolgere).
+
+
