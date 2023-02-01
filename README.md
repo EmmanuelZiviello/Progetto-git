@@ -1,2 +1,2 @@
-# Progetto-git
-Progetto per esame universitario
+# Progetto-Base di dati
+Progetto per l'esame base di dati
