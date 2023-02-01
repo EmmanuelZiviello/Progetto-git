@@ -72,7 +72,7 @@ CREATE TABLE "Schema_Progetto".Senior
 Nome VARCHAR(8) NOT NULL,
 Cognome VARCHAR(14) NOT NULL,
 Anni_Servizio INTEGER NOT NULL,
-CONSTRAINT JuniorPK PRIMARY KEY(CF)
+CONSTRAINT SeniorPK PRIMARY KEY(CF)
 );
 ```
 Questo file  permette di creare una tabella Senior nello schema creato in precedenza.CF è la chiave primaria e rappresenta un codice fiscale ed inoltre ogni attributo è NOT NULL perchè non si vuole avere un impiegato senza questi valori(es:avere un impiegato senza nome e cognome oppure senza anni di servizio non sarebbe adatto per ciò che la base di dati deve svolgere).
