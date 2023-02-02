@@ -51,7 +51,7 @@ Anni_Servizio INTEGER NOT NULL,
 CONSTRAINT JuniorPK PRIMARY KEY(CF)
 );
 ```
-Questo file  permette di creare una tabella Junior nello schema creato in precedenza.CF è la chiave primaria e rappresenta un codice fiscale ed inoltre ogni attributo è NOT NULL perchè non si vuole avere un impiegato senza questi valori(es:avere un impiegato senza nome e cognome oppure senza anni di servizio non sarebbe adatto per ciò che la base di dati deve svolgere).
+Questo file  permette di creare una tabella Junior nello schema creato in precedenza.CF è la chiave primaria e rappresenta un codice fiscale.Inoltre ogni attributo è NOT NULL perchè non si vuole avere un impiegato senza questi valori(es:avere un impiegato senza nome e cognome oppure senza anni di servizio non sarebbe adatto per ciò che la base di dati deve svolgere).
 
 **Middle.SQL**
 ```
@@ -63,7 +63,7 @@ Anni_Servizio INTEGER NOT NULL,
 CONSTRAINT MiddlePK PRIMARY KEY(CF)
 );
 ```
-Questo file  permette di creare una tabella Middle nello schema creato in precedenza.CF è la chiave primaria e rappresenta un codice fiscale ed inoltre ogni attributo è NOT NULL perchè non si vuole avere un impiegato senza questi valori(es:avere un impiegato senza nome e cognome oppure senza anni di servizio non sarebbe adatto per ciò che la base di dati deve svolgere).
+Questo file  permette di creare una tabella Middle nello schema creato in precedenza.CF è la chiave primaria e rappresenta un codice fiscale.Inoltre ogni attributo è NOT NULL perchè non si vuole avere un impiegato senza questi valori(es:avere un impiegato senza nome e cognome oppure senza anni di servizio non sarebbe adatto per ciò che la base di dati deve svolgere).
 
 **Senior.SQL**:
 ```
@@ -75,7 +75,7 @@ Anni_Servizio INTEGER NOT NULL,
 CONSTRAINT SeniorPK PRIMARY KEY(CF)
 );
 ```
-Questo file  permette di creare una tabella Senior nello schema creato in precedenza.CF è la chiave primaria e rappresenta un codice fiscale ed inoltre ogni attributo è NOT NULL perchè non si vuole avere un impiegato senza questi valori(es:avere un impiegato senza nome e cognome oppure senza anni di servizio non sarebbe adatto per ciò che la base di dati deve svolgere).
+Questo file  permette di creare una tabella Senior nello schema creato in precedenza.CF è la chiave primaria e rappresenta un codice fiscale.Inoltre ogni attributo è NOT NULL perchè non si vuole avere un impiegato senza questi valori(es:avere un impiegato senza nome e cognome oppure senza anni di servizio non sarebbe adatto per ciò che la base di dati deve svolgere).
 
 
 
@@ -89,6 +89,23 @@ Anni_Servizio INTEGER NOT NULL,
 CONSTRAINT DirigentePK PRIMARY KEY(CF)
 );
 ```
-Questo file  permette di creare una tabella Dirigente nello schema creato in precedenza.CF è la chiave primaria e rappresenta un codice fiscale ed inoltre ogni attributo è NOT NULL perchè non si vuole avere un impiegato senza questi valori(es:avere un impiegato senza nome e cognome oppure senza anni di servizio non sarebbe adatto per ciò che la base di dati deve svolgere).
+Questo file  permette di creare una tabella Dirigente nello schema creato in precedenza.CF è la chiave primaria e rappresenta un codice fiscale.Inoltre ogni attributo è NOT NULL perchè non si vuole avere un impiegato senza questi valori(es:avere un impiegato senza nome e cognome oppure senza anni di servizio non sarebbe adatto per ciò che la base di dati deve svolgere).
 
+**Laboratorio.SQL**
 
+```
+CREATE TABLE "Schema_Progetto".Laboratorio
+( Cod_Lab "Schema_Progetto"."CodiceL",
+Cod_Senior "Schema_Progetto"."CodiceF" NOT NULL,
+Topic VARCHAR(18) NOT NULL, 
+Afferenti INTEGER NOT NULL,
+CONSTRAINT LabPK PRIMARY KEY(Cod_Lab),
+CONSTRAINT LabFK FOREIGN KEY (Cod_Senior) REFERENCES  "Schema_Progetto".Senior(CF)  ON UPDATE CASCADE ON DELETE CASCADE
+);
+```
+Questo file permette di creare una tabella Laboratorio nello schema creato in precedenza.Cod lab è la chiave primaria e rappresenta un codice di laboratorio.Inoltre ogni attributo è NOT NULL perchè non si vuole avere un laboratorio senza questi valori(un laboratorio DEVE avere un topic,un referente scientifico e degli afferenti).
+
+**Progetto.SQL**
+```
+
+```
