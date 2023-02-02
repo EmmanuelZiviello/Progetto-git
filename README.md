@@ -150,15 +150,15 @@ Le chiavi esterne hanno azioni ON UPDATE CASCADE e ON DELETE CASCADE.
 
 **LavoroMiddle.SQL**
 ```
-CREATE TABLE "Schema_Progetto".LavoroJunior
-( Cod_Lab "Schema_Progetto"."CodiceL" ,
-Cod_Junior "Schema_Progetto"."CodiceF" ,
-CONSTRAINT LavoroJuniorPK PRIMARY KEY(Cod_Lab,Cod_Junior),
-CONSTRAINT LavoroJuniorFK1 FOREIGN KEY (Cod_Lab) REFERENCES  "Schema_Progetto".Laboratorio(Cod_Lab)  ON UPDATE CASCADE ON DELETE CASCADE,
-CONSTRAINT LavoroJuniorFK2 FOREIGN KEY (Cod_Junior) REFERENCES  "Schema_Progetto".Junior(CF)  ON UPDATE CASCADE ON DELETE CASCADE
+CREATE TABLE "Schema_Progetto".LavoroMiddle
+( Cod_Lab "Schema_Progetto"."CodiceL",
+Cod_Middle "Schema_Progetto"."CodiceF" ,
+CONSTRAINT LavoroMiddlePK PRIMARY KEY(Cod_Lab,Cod_Middle),
+CONSTRAINT LavoroMiddleFK1 FOREIGN KEY (Cod_Lab) REFERENCES  "Schema_Progetto".Laboratorio(Cod_Lab)  ON UPDATE CASCADE ON DELETE CASCADE,
+CONSTRAINT LavoroMiddleFK2 FOREIGN KEY (Cod_Middle) REFERENCES  "Schema_Progetto".Middle(CF)   ON UPDATE CASCADE ON DELETE CASCADE
 );
 ```
-Questo file ci permette di creare una tabella LavoroJunior nello schema creato in precedenza.La chiave primaria è composta da Cod Lab e da Cod Junior,questi attributi sono anche chiavi esterne delle tabelle Laboratorio e Junior(questa tabella fa da collegamento tra le due appena citate).
+Questo file ci permette di creare una tabella LavoroMiddle nello schema creato in precedenza.La chiave primaria è composta da Cod Lab e da Cod Middle,questi attributi sono anche chiavi esterne delle tabelle Laboratorio e Middle(questa tabella fa da collegamento tra le due appena citate).
 Le chiavi esterne hanno azioni ON UPDATE CASCADE e ON DELETE CASCADE.
 
 **LavoroSenior.SQL**
@@ -171,7 +171,7 @@ CONSTRAINT LavoroJuniorFK1 FOREIGN KEY (Cod_Lab) REFERENCES  "Schema_Progetto".L
 CONSTRAINT LavoroJuniorFK2 FOREIGN KEY (Cod_Junior) REFERENCES  "Schema_Progetto".Junior(CF)  ON UPDATE CASCADE ON DELETE CASCADE
 );
 ```
-Questo file ci permette di creare una tabella LavoroJunior nello schema creato in precedenza.La chiave primaria è composta da Cod Lab e da Cod Junior,questi attributi sono anche chiavi esterne delle tabelle Laboratorio e Junior(questa tabella fa da collegamento tra le due appena citate).
+Questo file ci permette di creare una tabella LavoroSenior nello schema creato in precedenza.La chiave primaria è composta da Cod Lab e da Cod Senior,questi attributi sono anche chiavi esterne delle tabelle Laboratorio e Senior(questa tabella fa da collegamento tra le due appena citate).
 Le chiavi esterne hanno azioni ON UPDATE CASCADE e ON DELETE CASCADE.
 
 
@@ -187,6 +187,7 @@ CONSTRAINT LavoroJuniorFK2 FOREIGN KEY (Cod_Junior) REFERENCES  "Schema_Progetto
 ```
 Questo file ci permette di creare una tabella LavoroJunior nello schema creato in precedenza.La chiave primaria è composta da Cod Lab e da Cod Junior,questi attributi sono anche chiavi esterne delle tabelle Laboratorio e Junior(questa tabella fa da collegamento tra le due appena citate).
 Le chiavi esterne hanno azioni ON UPDATE CASCADE e ON DELETE CASCADE.
+
 
 
 
