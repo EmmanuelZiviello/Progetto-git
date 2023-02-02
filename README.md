@@ -121,3 +121,20 @@ CONSTRAINT ProFK2 FOREIGN KEY (Cod_Dirigente) REFERENCES  "Schema_Progetto".Diri
 ```
 Questo file ci permette di creare una tabella Progetto nello schema creato in precedenza.La chiave primaria è composta da CUP e da Nome.Nome ha un vincolo di unicità perchè la chiave è composta(quindi senza questo vincolo di unicità ci potevano essere progetti con CUP diverso ma con lo stesso nome ma i requisiti specificano che ogni nome dev'essere presente solo una volta nel sistema).Cod Senior e Cod Dirigente sono chiavi esterne che legano questa tabella a Senior e a Dirigente con azioni ON UPDATE CASCADE e ON DELETE CASCADE.Ogni attributo è NOT NULL perchè le chiavi esterne devono essere avere un valore in ogni tupla della tabella.
 
+**Lavora_Su.SQL**
+```
+CREATE TABLE "Schema_Progetto".Lavora_Su
+( CUP "Schema_Progetto"."CodiceP",
+Cod_Lab "Schema_Progetto"."CodiceL",
+Nome VARCHAR(20) , 
+CONSTRAINT Lavora_SuPK PRIMARY KEY(CUP,Nome,Cod_Lab),
+CONSTRAINT Lavora_SuFK1 FOREIGN KEY (Cod_Lab) REFERENCES  "Schema_Progetto".Laboratorio(Cod_Lab)  ON UPDATE CASCADE ON DELETE CASCADE,
+CONSTRAINT Lavora_SuFK2 FOREIGN KEY (CUP,Nome) REFERENCES  "Schema_Progetto".Progetto(CUP,Nome)  ON UPDATE CASCADE ON DELETE CASCADE
+);
+```
+Questo file ci permette di creare una tabella Lavora_Su nello schema creato in precedenza.La chiave primaria è composta da Cup,Nome e da Cod Lab.Gli attributi che formano la chiave primaria sono anche chiavi esterne delle tabelle Progetto e Laboratorio(infatti questa tabella serve come collegamento tra le due tabelle citate).
+Le chiavi esterne hanno azioni ON UPDATE CASCADE e ON DELETE CASCADE.
+
+**LavoroJunior.SQL**
+
+
