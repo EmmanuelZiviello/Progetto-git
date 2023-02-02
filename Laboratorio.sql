@@ -1,5 +1,5 @@
 CREATE TABLE "Schema_Progetto".Laboratorio
-( Cod_Lab "Schema_Progetto"."CodiceL" NOT NULL,
+( Cod_Lab "Schema_Progetto"."CodiceL",
 Cod_Senior "Schema_Progetto"."CodiceF" NOT NULL,
 Topic VARCHAR(18) NOT NULL, 
 Afferenti INTEGER NOT NULL,
