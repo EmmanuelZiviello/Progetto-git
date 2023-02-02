@@ -177,12 +177,12 @@ Le chiavi esterne hanno azioni ON UPDATE CASCADE e ON DELETE CASCADE.
 
 **LavoroDirigente.SQL**
 ```
-CREATE TABLE "Schema_Progetto".LavoroJunior
+CREATE TABLE "Schema_Progetto".LavoroDirigente
 ( Cod_Lab "Schema_Progetto"."CodiceL" ,
-Cod_Junior "Schema_Progetto"."CodiceF" ,
-CONSTRAINT LavoroJuniorPK PRIMARY KEY(Cod_Lab,Cod_Junior),
-CONSTRAINT LavoroJuniorFK1 FOREIGN KEY (Cod_Lab) REFERENCES  "Schema_Progetto".Laboratorio(Cod_Lab)  ON UPDATE CASCADE ON DELETE CASCADE,
-CONSTRAINT LavoroJuniorFK2 FOREIGN KEY (Cod_Junior) REFERENCES  "Schema_Progetto".Junior(CF)  ON UPDATE CASCADE ON DELETE CASCADE
+Cod_Dirigente "Schema_Progetto"."CodiceF" ,
+CONSTRAINT LavoroDirigentePK PRIMARY KEY(Cod_Lab,Cod_Dirigente),
+CONSTRAINT LavoroDirigenteFK1 FOREIGN KEY (Cod_Lab) REFERENCES  "Schema_Progetto".Laboratorio(Cod_Lab)  ON UPDATE CASCADE ON DELETE CASCADE,
+CONSTRAINT LavoroDirigenteFK2 FOREIGN KEY (Cod_Dirigente) REFERENCES  "Schema_Progetto".Dirigente(CF)   ON UPDATE CASCADE ON DELETE CASCADE
 );
 ```
 Questo file ci permette di creare una tabella LavoroDirigente nello schema creato in precedenza.La chiave primaria è composta da Cod Lab e da Cod Dirigente,questi attributi sono anche chiavi esterne delle tabelle Laboratorio e Dirigente(questa tabella fa da collegamento tra le due appena citate).
