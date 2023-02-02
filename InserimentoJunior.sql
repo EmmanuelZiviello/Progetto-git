@@ -1,0 +1,2 @@
+Insert INTO "Schema_Progetto".junior(cf,nome,cognome,anni_servizio)
+VALUES ('AAAAAAAA','Pippo','Rosso',2),('BBBBBBBB','Pippo','Blu',1),('CCCCCCCC','Paperino','Verde',2),('BBCDFSHL','Paperoga','Esposito',2),('BZZSDFCB','Mario','Rossi',1),('NDCLJHFS','Luca','Brosio',2);

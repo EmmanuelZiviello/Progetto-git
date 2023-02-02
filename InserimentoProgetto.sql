@@ -1,0 +1,2 @@
+Insert INTO "Schema_Progetto".progetto(cup,nome,cod_senior,cod_dirigente)
+VALUES ('AAB','Dati_P','HHHHHHHH','JJJJJJJJ'),('AAC','Prog_P','HHHHHHHH','KKKKKKKK'),('AAD','SQL_P','GGGGGGGG','LLLLLLLL'),('ZAZ','AI_P','GGGGGGGG','LLLLLLLL'),('SAC','Lux_P','HHHHHHHH','KKKKKKKK'),('SUS','GPT_P','HHHHHHHH','LLLLLLLL');

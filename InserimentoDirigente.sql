@@ -1,0 +1,2 @@
+Insert INTO "Schema_Progetto".dirigente(cf,nome,cognome,anni_servizio)
+VALUES ('JJJJJJJJ','Minnie','Provola',1),('KKKKKKKK','Minnie','Pizza',2),('LLLLLLLL','Pippo','Pasta',8),('JKRJJJJJ','John','Provolini',8),('KVBNKASD','Luca','Brodini',1),('WLSMT231','Will','Smith',5);

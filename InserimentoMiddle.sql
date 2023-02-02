@@ -1,0 +1,2 @@
+Insert INTO "Schema_Progetto".middle(cf,nome,cognome,anni_servizio)
+VALUES ('DDDDDDDD','Pippo','Blu',4),('EEEEEEEE','Pippo','Giallo',5),('FFFFFFFF','Paperino','Verdi',6),('DLASCEMD','Pluto','De Martini',5),('EZKLOSLK','Enrico','Papo',6),('IFGHFNSF','Qui','Fusilli',6);

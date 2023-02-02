@@ -1,0 +1,2 @@
+Insert INTO "Schema_Progetto".senior(cf,nome,cognome,anni_servizio)
+VALUES ('GGGGGGGG','Pippo','Nero',7),('HHHHHHHH','Pippo','Bianco',9),('IIIIIIII','Paperino','Neri',10),('GABSGGGG','Gabriele','Gambero',10),('HZXDSAHH','Amhed','Blanc',9),('AXLIIXSA','Juan','Fois',10);

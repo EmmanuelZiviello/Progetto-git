@@ -1,0 +1,2 @@
+Insert INTO "Schema_Progetto".laboratorio(cod_lab,cod_senior,topic,afferenti)
+VALUES ('AB','GGGGGGGG','Java',15),('AC','GGGGGGGG','C',4),('BD','IIIIIIII','SQL',4),('BB','GGGGGGGG','Ricerche',1),('BS','GGGGGGGG','AI',2),('BE','IIIIIIII','ChatGPT',3);
