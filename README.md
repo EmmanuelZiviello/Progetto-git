@@ -203,7 +203,44 @@ Le chiavi esterne hanno azioni ON UPDATE CASCADE e ON DELETE CASCADE.
 
 **DirigenzaMiddle.SQL**
 ```
-
+CREATE TABLE "Schema_Progetto".DirigenzaMiddle
+( Cod_Dirigente "Schema_Progetto"."CodiceF" ,
+Cod_Middle "Schema_Progetto"."CodiceF" ,
+CONSTRAINT DirigenzaMiddlePK PRIMARY KEY(Cod_Dirigente,Cod_Middle),
+CONSTRAINT DirigenzaMiddleFK1 FOREIGN KEY (Cod_Dirigente) REFERENCES  "Schema_Progetto".Dirigente(CF)  ON UPDATE CASCADE ON DELETE CASCADE,
+CONSTRAINT DirigenzaMiddleFK2 FOREIGN KEY (Cod_Middle) REFERENCES  "Schema_Progetto".Middle(CF)   ON UPDATE CASCADE ON DELETE CASCADE
+);
 ```
 Questo file ci permette di creare una tabella DirigenzaMiddle nello schema creato in precedenza.La chiave primaria è composta da Cod Dirigente e da Cod Middle,questi attributi sono anche chiavi esterne delle tabelle Dirigente e Middle(questa tabella fa da collegamento tra le due appena citate).
 Le chiavi esterne hanno azioni ON UPDATE CASCADE e ON DELETE CASCADE.
+
+
+**DirigenzaSenior.SQL**
+```
+CREATE TABLE "Schema_Progetto".DirigenzaJunior
+( Cod_Dirigente "Schema_Progetto"."CodiceF" ,
+Cod_Junior "Schema_Progetto"."CodiceF" ,
+CONSTRAINT DirigenzaJuniorPK PRIMARY KEY(Cod_Dirigente,Cod_Junior),
+CONSTRAINT DirigenzaJuniorFK1 FOREIGN KEY (Cod_Dirigente) REFERENCES  "Schema_Progetto".Dirigente(CF)  ON UPDATE CASCADE  ON DELETE CASCADE,
+CONSTRAINT DirigenzaJuniorFK2 FOREIGN KEY (Cod_Junior) REFERENCES  "Schema_Progetto".Junior(CF)   ON UPDATE CASCADE ON DELETE CASCADE
+);
+```
+Questo file ci permette di creare una tabella DirigenzaSenior nello schema creato in precedenza.La chiave primaria è composta da Cod Dirigente e da Cod Senior,questi attributi sono anche chiavi esterne delle tabelle Dirigente e Senior(questa tabella fa da collegamento tra le due appena citate).
+Le chiavi esterne hanno azioni ON UPDATE CASCADE e ON DELETE CASCADE.
+
+
+
+**DirigenzaDirigenza.SQL**
+```
+CREATE TABLE "Schema_Progetto".DirigenzaJunior
+( Cod_Dirigente "Schema_Progetto"."CodiceF" ,
+Cod_Junior "Schema_Progetto"."CodiceF" ,
+CONSTRAINT DirigenzaJuniorPK PRIMARY KEY(Cod_Dirigente,Cod_Junior),
+CONSTRAINT DirigenzaJuniorFK1 FOREIGN KEY (Cod_Dirigente) REFERENCES  "Schema_Progetto".Dirigente(CF)  ON UPDATE CASCADE  ON DELETE CASCADE,
+CONSTRAINT DirigenzaJuniorFK2 FOREIGN KEY (Cod_Junior) REFERENCES  "Schema_Progetto".Junior(CF)   ON UPDATE CASCADE ON DELETE CASCADE
+);
+```
+Questo file ci permette di creare una tabella DirigenzaDirigenza nello schema creato in precedenza.La chiave primaria è composta da Cod Dirigente e da Cod Dirigente2,questi attributi sono anche chiavi esterne delle tabelle Dirigente e Dirigente(questa tabella fa da collegamento tra le due appena citate).
+Le chiavi esterne hanno azioni ON UPDATE CASCADE e ON DELETE CASCADE.
+
+
