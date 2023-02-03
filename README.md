@@ -1039,7 +1039,7 @@ CREATE TRIGGER "ScattiCarrieraS"
 ```
 
 
-Questo trigger viene eseguito dopo aver aggiornato il valore degli anni su Senior con la condizione che il nuovo valore degli anni sia $<$7(quindi diversi da quelli richiesti per essere nella categoria Senior)ed esegue la procedura ProScattiS.
+Questo trigger viene eseguito dopo aver aggiornato il valore degli anni su Senior con la condizione che il nuovo valore degli anni sia <7(quindi diversi da quelli richiesti per essere nella categoria Senior)ed esegue la procedura ProScattiS.
 
 **ProScattiS.SQL**
 
@@ -1209,6 +1209,65 @@ In base al valore degli anni di servizio dell'impiegato quest'ultima parte di co
 Quindi verranno inserite tramite delle query (ed anche  dei loop nel caso delle tabelle dirigenzaCategoria e lavoroCategoria visto che potrebbero esserci multipli inserimenti)nuove tuple in Categoria,dirigenzaCategoria e lavoroCategoria, le quali conterranno esattamente gli stessi valori che erano presenti in Senior,dirigenzasenior e lavorosenior prima che venisse eliminato l'impiegato Senior che ha attivato il trigger.
 Dopo aver inserito questi nuovi dati  si effettuerà come ultima operazione la cancellazione delle due tabelle temporanee TMP e TMP2.
 Quindi lo scopo di questo trigger è gestire la variazione di categoria di un impiegato Senior dovuta all'aggiornamento del valore degli anni di servizio tramite l'inserimento di dati legati ad esso nelle tabelle legate alla sua nuova categoria.
+
+
+**ControlloDirigente.SQL**
+
+```
+CREATE TRIGGER "ControlloDirigente"
+    BEFORE INSERT ON "Schema_Progetto".dirigente
+    FOR EACH ROW
+    EXECUTE FUNCTION "Schema_Progetto"."ProControlloDirigente"();
+```
+
+Questo trigger viene eseguito prima dell'inserimento su Dirigente ed esegue la procedura ProControlloDirigente.
+
+
+
+**ProControlloDirigente.SQL**
+
+
+```
+CREATE FUNCTION "Schema_Progetto"."ProControlloDirigente"()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+     NOT LEAKPROOF
+AS 
+$$
+DECLARE  
+sql_smt VARCHAR(200);
+cf_trovato "Schema_Progetto"."dirigente".cf%TYPE;
+
+BEGIN
+sql_smt:='SELECT cf FROM "Schema_Progetto".junior WHERE cf=$1';
+EXECUTE sql_smt INTO cf_trovato USING NEW.cf;
+IF cf_trovato=NEW.cf THEN 
+RAISE EXCEPTION 'Codice Fiscale già presente 'USING ERRCODE='unique_violation';
+END IF;
+
+sql_smt:='SELECT cf FROM "Schema_Progetto".middle WHERE cf=$1';
+EXECUTE sql_smt INTO cf_trovato USING NEW.cf;
+IF cf_trovato=NEW.cf THEN 
+RAISE EXCEPTION 'Codice Fiscale già presente ' USING ERRCODE='unique_violation';
+END IF;
+
+sql_smt:='SELECT cf FROM "Schema_Progetto".senior WHERE cf=$1';
+EXECUTE sql_smt INTO cf_trovato USING NEW.cf;
+IF cf_trovato=NEW.cf THEN 
+RAISE EXCEPTION 'Codice Fiscale già presente 'USING ERRCODE='unique_violation';
+END IF;
+
+RETURN NEW;
+END;
+$$;
+
+ALTER FUNCTION "Schema_Progetto"."ProControlloDirigente"()
+    OWNER TO postgres;
+```
+
+Questa procedura verifica tramite delle semplici query se esiste un impiegato di una categoria diversa da Dirigente ma con lo stesso codice fiscale.
+Se viene trovato un'impiegato di un altra categoria ma con lo stesso cf che si vorrebbe inserire in Dirigente(il trigger è before insert quindi per ora non c'è ancora una tupla in Dirigente con il NEW.cf)allora avviene un eccezione che stampa il messaggio:Codice Fiscale già presente.
+Quindi lo scopo di questo trigger è di verificare l'unicità del codice fiscale che si vuole inserire in Dirigente.
 
 
 
