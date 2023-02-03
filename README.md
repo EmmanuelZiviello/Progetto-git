@@ -664,3 +664,47 @@ CREATE TRIGGER "ControlloMiddle"
 Questo trigger viene eseguito prima dell'inserimento su Middle ed esegue la procedura ProControlloMiddle.
 
 **ProControlloMiddle.SQL**
+
+```
+CREATE FUNCTION "Schema_Progetto"."ProControlloMiddle"()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+     NOT LEAKPROOF
+AS 
+$$
+DECLARE  
+sql_smt VARCHAR(200);
+cf_trovato "Schema_Progetto"."middle".cf%TYPE;
+
+BEGIN
+sql_smt:='SELECT cf FROM "Schema_Progetto".junior WHERE cf=$1';
+EXECUTE sql_smt INTO cf_trovato USING NEW.cf;
+IF cf_trovato=NEW.cf THEN 
+RAISE EXCEPTION 'Codice Fiscale già presente 'USING ERRCODE='unique_violation';
+END IF;
+
+sql_smt:='SELECT cf FROM "Schema_Progetto".senior WHERE cf=$1';
+EXECUTE sql_smt INTO cf_trovato USING NEW.cf;
+IF cf_trovato=NEW.cf THEN 
+RAISE EXCEPTION 'Codice Fiscale già presente ' USING ERRCODE='unique_violation';
+END IF;
+
+sql_smt:='SELECT cf FROM "Schema_Progetto".dirigente WHERE cf=$1';
+EXECUTE sql_smt INTO cf_trovato USING NEW.cf;
+IF cf_trovato=NEW.cf THEN 
+RAISE EXCEPTION 'Codice Fiscale già presente 'USING ERRCODE='unique_violation';
+END IF;
+
+RETURN NEW;
+END;
+$$;
+
+ALTER FUNCTION "Schema_Progetto"."ProControlloMiddle"()
+    OWNER TO postgres;
+```
+
+Questa procedura verifica tramite delle semplici query se esiste un impiegato di una categoria diversa da Middle ma con lo stesso codice fiscale.
+Se viene trovato un'impiegato di un altra categoria ma con lo stesso cf che si vorrebbe inserire in Middle(il trigger è before insert quindi per ora non c'è ancora una tupla in Middle con il NEW.cf)allora avviene un eccezione che stampa il messaggio:Codice Fiscale già presente.
+Quindi lo scopo di questo trigger è di verificare l'unicità del codice fiscale che si vuole inserire in Middle.
+
+
