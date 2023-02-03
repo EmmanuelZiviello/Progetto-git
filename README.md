@@ -441,3 +441,35 @@ CREATE TRIGGER "InsJunior"
     EXECUTE FUNCTION "Schema_Progetto"."ProInsJunior"();
 ```
 Questo trigger viene eseguito dopo l'inserimento su Junior con la condizione che gli anni inseriti siano >= 3(quindi quando gli anni di servizio del impiegato Junior sono diversi da quelli richiesti per essere nella sua categoria) ed esegue la procedura ProInsJunior.
+
+
+
+**ProInsJ.SQL**
+```
+CREATE FUNCTION "Schema_Progetto"."ProInsJunior"()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+     NOT LEAKPROOF
+AS 
+$$
+BEGIN
+DELETE FROM "Schema_Progetto".junior WHERE cf=NEW.cf;
+IF (NEW.anni_servizio<7) THEN 
+INSERT INTO "Schema_Progetto".middle(cf,nome,cognome,anni_servizio) VALUES(NEW.cf,NEW.nome,NEW.cognome,NEW.anni_servizio);
+END IF;
+IF (NEW.anni_servizio>=7) THEN 
+INSERT INTO "Schema_Progetto".senior(cf,nome,cognome,anni_servizio) VALUES(NEW.cf,NEW.nome,NEW.cognome,NEW.anni_servizio);
+END IF;
+RETURN NEW;
+END;
+$$;
+
+ALTER FUNCTION "Schema_Progetto"."ProInsJunior"()
+    OWNER TO postgres;
+```
+Questa procedura cancella la tupla appena inserita su Junior(in PostgreSQL non è possibile creare una procedura che gestisca anche l'andamento delle transazioni del database con commit e rollback manuali quindi si è optato per realizzare quest'azione manualmente con un trigger AFTER INSERT ed un'operazione DELETE)e verifica quanti sono gli anni di servizio dell'impiegato.
+Se l'impiegato lavorava da meno di 7 anni allora i suoi dati vengono inseriti come tupla di Middle mentre se gli anni sono almeno 7 allora i dati sono vengono inseriti come tupla di Senior.
+Lo scopo di questo trigger è quello di gestire gli inserimenti in Junior con anni diversi da quelli richiesti per essere in questa categoria ed effettuare l'inserimento nella categoria corretta.
+
+**ScattiCarrieraJ.SQL**
+
