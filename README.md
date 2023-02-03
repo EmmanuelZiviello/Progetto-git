@@ -929,3 +929,99 @@ In base al valore degli anni di servizio dell'impiegato quest'ultima parte di co
 Quindi verranno inserite tramite delle query (ed anche  dei loop nel caso delle tabelle dirigenzaCategoria e lavoroCategoria visto che potrebbero esserci multipli inserimenti)nuove tuple in Categoria,dirigenzaCategoria e lavoroCategoria, le quali conterranno esattamente gli stessi valori che erano presenti in Middle,dirigenzamiddle e lavoromiddle prima che venisse eliminato l'impiegato Middle che ha attivato il trigger.
 Dopo aver inserito questi nuovi dati  si effettuerà come ultima operazione la cancellazione delle due tabelle temporanee TMP e TMP2.
 Quindi lo scopo di questo trigger è gestire la variazione di categoria di un impiegato Middle dovuta all'aggiornamento del valore degli anni di servizio tramite l'inserimento di dati legati ad esso nelle tabelle legate alla sua nuova categoria.
+
+**ControlloSenior.SQL**
+
+```
+CREATE TRIGGER "ControlloSenior"
+    BEFORE INSERT ON "Schema_Progetto".senior
+    FOR EACH ROW
+    EXECUTE FUNCTION "Schema_Progetto"."ProControlloSenior"();
+```
+
+Questo trigger viene eseguito prima dell'inserimento su Senior ed esegue la procedura ProControlloSenior.
+
+**ProControlloSenior.SQL**
+
+```
+CREATE FUNCTION "Schema_Progetto"."ProControlloSenior"()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+     NOT LEAKPROOF
+AS 
+$$
+DECLARE  
+sql_smt VARCHAR(200);
+cf_trovato "Schema_Progetto"."senior".cf%TYPE;
+
+BEGIN
+sql_smt:='SELECT cf FROM "Schema_Progetto".junior WHERE cf=$1';
+EXECUTE sql_smt INTO cf_trovato USING NEW.cf;
+IF cf_trovato=NEW.cf THEN 
+RAISE EXCEPTION 'Codice Fiscale già presente 'USING ERRCODE='unique_violation';
+END IF;
+
+sql_smt:='SELECT cf FROM "Schema_Progetto".middle WHERE cf=$1';
+EXECUTE sql_smt INTO cf_trovato USING NEW.cf;
+IF cf_trovato=NEW.cf THEN 
+RAISE EXCEPTION 'Codice Fiscale già presente ' USING ERRCODE='unique_violation';
+END IF;
+
+sql_smt:='SELECT cf FROM "Schema_Progetto".dirigente WHERE cf=$1';
+EXECUTE sql_smt INTO cf_trovato USING NEW.cf;
+IF cf_trovato=NEW.cf THEN 
+RAISE EXCEPTION 'Codice Fiscale già presente 'USING ERRCODE='unique_violation';
+END IF;
+
+RETURN NEW;
+END;
+$$;
+
+ALTER FUNCTION "Schema_Progetto"."ProControlloSenior"()
+    OWNER TO postgres;
+```
+
+Questa procedura verifica tramite delle semplici query se esiste un impiegato di una categoria diversa da Senior ma con lo stesso codice fiscale.
+Se viene trovato un'impiegato di un altra categoria ma con lo stesso cf che si vorrebbe inserire in Senior(il trigger è before insert quindi per ora non c'è ancora una tupla in Senior con il NEW.cf)allora avviene un eccezione che stampa il messaggio:Codice Fiscale già presente.
+Quindi lo scopo di questo trigger è di verificare l'unicità del codice fiscale che si vuole inserire in Senior.
+
+**InsSenior.SQL**
+
+```
+CREATE TRIGGER "InsSenior"
+    AFTER INSERT ON "Schema_Progetto".senior
+    FOR EACH ROW
+	WHEN(NEW.anni_servizio<7)
+    EXECUTE FUNCTION "Schema_Progetto"."ProInsSenior"();
+```
+
+Questo trigger viene eseguito dopo l'inserimento su Senior con la condizione che gli anni inseriti siano < 7(quindi quando gli anni di servizio dell' impiegato Senior sono diversi da quelli richiesti per essere nella sua categoria) ed esegue la procedura ProInsSenior.
+
+**ProInsSenior.SQL**
+
+```
+CREATE FUNCTION "Schema_Progetto"."ProInsSenior"()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+     NOT LEAKPROOF
+AS 
+$$
+BEGIN
+DELETE FROM "Schema_Progetto".senior WHERE cf=NEW.cf;
+IF (NEW.anni_servizio<3) THEN 
+INSERT INTO "Schema_Progetto".junior(cf,nome,cognome,anni_servizio) VALUES(NEW.cf,NEW.nome,NEW.cognome,NEW.anni_servizio);
+END IF;
+IF (NEW.anni_servizio<7 AND NEW.anni_servizio>=3) THEN 
+INSERT INTO "Schema_Progetto".middle(cf,nome,cognome,anni_servizio) VALUES(NEW.cf,NEW.nome,NEW.cognome,NEW.anni_servizio);
+END IF;
+RETURN NEW;
+END;
+$$;
+
+ALTER FUNCTION "Schema_Progetto"."ProInsSenior"()
+    OWNER TO postgres;
+```
+
+Questa procedura cancella la tupla appena inserita su Senior(in PostgreSQL non è possibile creare una procedura che gestisca anche l'andamento delle transazioni del database con commit e rollback manuali quindi si è optato per realizzare quest'azione manualmente con un trigger AFTER INSERT ed un'operazione DELETE)e verifica quanti sono gli anni di servizio dell'impiegato.
+Se l'impiegato lavorava da meno di 3 anni allora i suoi dati vengono inseriti come tupla di Junior mentre se gli anni sono tra i 3 ed i 6(quindi >=3 e <7)  allora i dati sono vengono inseriti come tupla di Middle.
+Lo scopo di questo trigger è quello di gestire gli inserimenti in Senior con anni diversi da quelli richiesti per essere in questa categoria ed effettuare l'inserimento nella categoria corretta.
