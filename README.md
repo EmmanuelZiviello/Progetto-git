@@ -707,4 +707,61 @@ Questa procedura verifica tramite delle semplici query se esiste un impiegato di
 Se viene trovato un'impiegato di un altra categoria ma con lo stesso cf che si vorrebbe inserire in Middle(il trigger è before insert quindi per ora non c'è ancora una tupla in Middle con il NEW.cf)allora avviene un eccezione che stampa il messaggio:Codice Fiscale già presente.
 Quindi lo scopo di questo trigger è di verificare l'unicità del codice fiscale che si vuole inserire in Middle.
 
+**InsMiddle.SQL**
 
+```
+CREATE TRIGGER "InsMiddle"
+    AFTER INSERT ON "Schema_Progetto".middle
+    FOR EACH ROW
+	WHEN(NEW.anni_servizio>=7 OR NEW.anni_servizio <3)
+    EXECUTE FUNCTION "Schema_Progetto"."ProInsMiddle"();
+```
+
+
+Questo trigger viene eseguito dopo l'inserimento su Middle con la condizione che gli anni inseriti siano >= 7 o siano <3(quindi quando gli anni di servizio del impiegato Middle sono diversi da quelli richiesti per essere nella sua categoria) ed esegue la procedura ProInsMiddle.
+
+
+**ProInsMiddle.SQL**
+
+```
+CREATE FUNCTION "Schema_Progetto"."ProInsMiddle"()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+     NOT LEAKPROOF
+AS 
+$$
+BEGIN
+DELETE FROM "Schema_Progetto".middle WHERE cf=NEW.cf;
+IF (NEW.anni_servizio<3) THEN 
+INSERT INTO "Schema_Progetto".junior(cf,nome,cognome,anni_servizio) VALUES(NEW.cf,NEW.nome,NEW.cognome,NEW.anni_servizio);
+END IF;
+IF (NEW.anni_servizio>=7) THEN 
+INSERT INTO "Schema_Progetto".senior(cf,nome,cognome,anni_servizio) VALUES(NEW.cf,NEW.nome,NEW.cognome,NEW.anni_servizio);
+END IF;
+RETURN NEW;
+END;
+$$;
+
+ALTER FUNCTION "Schema_Progetto"."ProInsMiddle"()
+    OWNER TO postgres;
+```
+
+Questa procedura cancella la tupla appena inserita su Middle(in PostgreSQL non è possibile creare una procedura che gestisca anche l'andamento delle transazioni del database con commit e rollback manuali quindi si è optato per realizzare quest'azione manualmente con un trigger AFTER INSERT ed un'operazione DELETE)e verifica quanti sono gli anni di servizio dell'impiegato.
+Se l'impiegato lavorava da meno di 3 anni allora i suoi dati vengono inseriti come tupla di Junior mentre se gli anni sono almeno 7 allora i dati sono vengono inseriti come tupla di Senior.
+
+Lo scopo di questo trigger è quello di gestire gli inserimenti in Middle con anni diversi da quelli richiesti per essere in questa categoria ed effettuare l'inserimento nella categoria corretta.
+
+**ScattiCarrieraM.SQL**
+
+```
+CREATE TRIGGER "ScattiCarrieraM"
+    AFTER UPDATE OF anni_servizio
+    ON "Schema_Progetto".middle
+    FOR EACH ROW
+    WHEN (NEW.anni_servizio<3 OR NEW.anni_servizio>=7)
+    EXECUTE FUNCTION "Schema_Progetto"."ProScattiM"();
+```
+
+Questo trigger viene eseguito dopo aver aggiornato il valore degli anni su Middle con la condizione che il nuovo valore degli anni sia >=7 o  <3 (quindi diversi da quelli richiesti per essere nella categoria Midde)ed esegue la procedura ProScattiM.
+
+**ProScattiM.SQL**
