@@ -1344,3 +1344,140 @@ Questa funzione ha due parametri(e sono entrambi di input):input_cup e input_nom
 Viene quindi effettuata una query che utilizza questi parametri per contare i codici dei laboratori che lavorano al progetto identificato dai parametri della funzione.
 Il numero dei codici di laboratorio trovati è il valore intero restituito dalla funzione.
 
+
+
+**ControlloLavoroJunior.SQL**
+
+```
+CREATE TRIGGER "ControlloLavoroJunior"
+    BEFORE INSERT ON "Schema_Progetto".lavorojunior
+    FOR EACH ROW
+    EXECUTE FUNCTION "Schema_Progetto"."ProControlloLavoro"();
+```
+
+Questo trigger viene eseguito prima dell'inserimento su LavoroJunior ed esegue la procedura ProControlloLavoro.
+
+
+**ProControlloLavoro.SQL**
+
+```
+CREATE FUNCTION "Schema_Progetto"."ProControlloLavoro"()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+     NOT LEAKPROOF
+AS 
+$$
+DECLARE  
+sql_smt VARCHAR(200);
+afferenti_trovati "Schema_Progetto"."laboratorio".afferenti%TYPE;
+num_afferenti_attuale INTEGER;
+
+BEGIN
+sql_smt:='SELECT afferenti FROM "Schema_Progetto".laboratorio WHERE cod_lab=$1';
+EXECUTE sql_smt INTO afferenti_trovati USING NEW.cod_lab;
+--num_afferenti_attuale:=fun_afferenti(NEW.cod_lab);
+SELECT "Schema_Progetto".fun_afferenti(NEW.cod_lab) INTO num_afferenti_attuale;
+IF num_afferenti_attuale=afferenti_trovati THEN 
+RAISE EXCEPTION 'Impossibile inserire ulteriori afferenti:Capienza massima raggiunta 'USING ERRCODE='unique_violation';
+END IF;
+
+RETURN NEW;
+END;
+$$;
+
+ALTER FUNCTION "Schema_Progetto"."ProControlloLavoro"()
+    OWNER TO postgres;
+```
+
+Questa procedura è usata per i trigger ControlloLavoroCategoria e funziona nel seguente modo:
+Dato il codice di laboratorio che si vuole inserire in input(non ancora inserito perchè i trigger che usano questa procedura sono del tipo before insert),viene trovato il numero di afferenti che quel laboratorio può avere(questo valore è il numero massimo di persone che possono lavorare in quel laboratorio).
+Questo valore dovrà essere confrontato con il valore di ritorno di una funzione:fun_afferenti(la quale ha come parametro il codice di laboratorio che si vuole inserire in input).
+La funzione fun_afferenti restituisce un valore intero che indica il numero di persone che lavorano attualmente nel laboratorio inserito come parametro della funzione.Si confronta il valore di ritorno di fun_afferenti con il valore massimo di afferenti trovato precedentemente tramite query e se questi due valori sono uguali allora avviene un eccezione che stampa il messaggio:Impossibile inserire ulteriori afferenti:Capienza massima raggiunta.
+Questo trigger ci assicura  di non avere più lavoratori rispetto alla capienza del laboratorio(indicata dall'attributo afferenti nella tabella Laboratorio).
+
+
+**fun_afferenti.SQL**
+
+```
+CREATE FUNCTION "Schema_Progetto".fun_afferenti(IN input_lab "Schema_Progetto"."CodiceL")
+    RETURNS integer
+   LANGUAGE 'plpgsql'
+     NOT LEAKPROOF
+AS    
+$$
+DECLARE 
+
+sql_smt VARCHAR(1500);
+afferenti_trovati "Schema_Progetto"."laboratorio"."afferenti"%TYPE;
+lab_trovato "Schema_Progetto"."laboratorio"."cod_lab"%TYPE;
+
+
+BEGIN
+sql_smt:='SELECT tutto.cod_lab,
+    count(*) AS count
+   FROM ( SELECT l.cod_lab,
+            jun.cod_junior
+           FROM "Schema_Progetto".lavorojunior jun
+             JOIN "Schema_Progetto".laboratorio l ON l.cod_lab::bpchar = jun.cod_lab::bpchar
+        UNION
+         SELECT l.cod_lab,
+            mid.cod_middle
+           FROM "Schema_Progetto".lavoromiddle mid
+             JOIN "Schema_Progetto".laboratorio l ON l.cod_lab::bpchar = mid.cod_lab::bpchar
+        UNION
+         SELECT l.cod_lab,
+            sen.cod_senior
+           FROM "Schema_Progetto".lavorosenior sen
+             JOIN "Schema_Progetto".laboratorio l ON l.cod_lab::bpchar = sen.cod_lab::bpchar
+        UNION
+         SELECT l.cod_lab,
+            dir.cod_dirigente
+           FROM "Schema_Progetto".lavorodirigente dir
+             JOIN "Schema_Progetto".laboratorio l ON l.cod_lab::bpchar = dir.cod_lab::bpchar) tutto
+  WHERE tutto.cod_lab=$1
+  GROUP BY tutto.cod_lab ';
+EXECUTE sql_smt INTO lab_trovato,afferenti_trovati USING input_lab;
+return afferenti_trovati;
+END;
+$$;
+ALTER FUNCTION "Schema_Progetto".fun_afferenti(IN input_lab "Schema_Progetto"."CodiceL")
+    OWNER TO postgres;
+```
+
+Questa funzione ha un parametro di input:input_lab che rappresenta un codice di laboratorio.
+Viene effettuata una query che utilizza il parametro della funzione  per contare il numero di persone che lavorano al laboratorio inserito come parametro di questa funzione.Il numero di lavoratori viene poi restituito dalla funzione.
+
+**ControlloLavoroMiddle.SQL**
+
+```
+CREATE TRIGGER "ControlloLavoroMiddle"
+    BEFORE INSERT ON "Schema_Progetto".lavoromiddle
+    FOR EACH ROW
+    EXECUTE FUNCTION "Schema_Progetto"."ProControlloLavoro"();
+```
+
+Questo trigger viene eseguito prima dell'inserimento su LavoroMiddle ed esegue la procedura ProControlloLavoro.
+
+
+**ControlloLavoroSenior.SQL**
+
+```
+CREATE TRIGGER "ControlloLavoroSenior"
+    BEFORE INSERT ON "Schema_Progetto".lavorosenior
+    FOR EACH ROW
+    EXECUTE FUNCTION "Schema_Progetto"."ProControlloLavoro"();
+```
+
+Questo trigger viene eseguito prima dell'inserimento su LavoroSenior ed esegue la procedura ProControlloLavoro.
+
+
+**ControlloLavoroDirigente.SQL**
+
+```
+CREATE TRIGGER "ControlloLavoroDirigente"
+    BEFORE INSERT ON "Schema_Progetto".lavorodirigente
+    FOR EACH ROW
+    EXECUTE FUNCTION "Schema_Progetto"."ProControlloLavoro"();
+```
+
+Questo trigger viene eseguito prima dell'inserimento su LavoroDirigente ed esegue la procedura ProControlloLavoro.
