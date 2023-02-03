@@ -651,3 +651,16 @@ In base al valore degli anni di servizio dell'impiegato quest'ultima parte di co
 Quindi verranno inserite tramite delle query (ed anche  dei loop nel caso delle tabelle dirigenzaCategoria e lavoroCategoria visto che potrebbero esserci multipli inserimenti)nuove tuple in Categoria,dirigenzaCategoria e lavoroCategoria, le quali conterranno esattamente gli stessi valori che erano presenti in Junior,dirigenzajunior e lavorojunior prima che veniva eliminato l'impiegato Junior che ha attivato il trigger.
 Dopo aver inserito questi nuovi dati  si effettuerà come ultima operazione la cancellazione delle due tabelle temporanee TMP e TMP2.
 Quindi lo scopo di questo trigger è gestire la variazione di categoria di un impiegato Junior dovuta all'aggiornamento del valore degli anni di servizio tramite l'inserimento di dati legati ad esso nelle tabelle legate alla sua nuova categoria.
+
+
+**ControlloMiddle.SQL**
+```
+CREATE TRIGGER "ControlloMiddle"
+    BEFORE INSERT ON "Schema_Progetto".middle
+    FOR EACH ROW
+    EXECUTE FUNCTION "Schema_Progetto"."ProControlloMiddle"();
+```
+
+Questo trigger viene eseguito prima dell'inserimento su Middle ed esegue la procedura ProControlloMiddle.
+
+**ProControlloMiddle.SQL**
