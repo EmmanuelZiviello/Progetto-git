@@ -388,7 +388,9 @@ CREATE TRIGGER "ControlloJunior"
    Questo trigger viene eseguito prima dell'inserimento su Junior ed esegue la procedura ProControlloJunior.
    
    **ProControlloJunior.SQL**
-    ```
+
+
+```
    CREATE FUNCTION "Schema_Progetto"."ProControlloJunior"()
     RETURNS trigger
     LANGUAGE 'plpgsql'
@@ -424,7 +426,7 @@ $$;
 
 ALTER FUNCTION "Schema_Progetto"."ProControlloJunior"()
     OWNER TO postgres;
-    ```
+   ```
    Questa procedura verifica tramite delle semplici query se esiste un impiegato di una categoria diversa da Junior ma con lo stesso codice fiscale.
 Se viene trovato un'impiegato di un altra categoria ma con lo stesso cf che si vorrebbe inserire in Junior(il trigger è before insert quindi per ora non c'è ancora una tupla in Junior con il NEW.cf)allora avviene un eccezione che stampa il messaggio:Codice Fiscale già presente.
 Quindi lo scopo di questo trigger è di verificare l'unicità del codice fiscale che si vuole inserire in Junior.
