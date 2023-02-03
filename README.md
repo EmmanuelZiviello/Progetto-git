@@ -1025,3 +1025,191 @@ ALTER FUNCTION "Schema_Progetto"."ProInsSenior"()
 Questa procedura cancella la tupla appena inserita su Senior(in PostgreSQL non è possibile creare una procedura che gestisca anche l'andamento delle transazioni del database con commit e rollback manuali quindi si è optato per realizzare quest'azione manualmente con un trigger AFTER INSERT ed un'operazione DELETE)e verifica quanti sono gli anni di servizio dell'impiegato.
 Se l'impiegato lavorava da meno di 3 anni allora i suoi dati vengono inseriti come tupla di Junior mentre se gli anni sono tra i 3 ed i 6(quindi >=3 e <7)  allora i dati sono vengono inseriti come tupla di Middle.
 Lo scopo di questo trigger è quello di gestire gli inserimenti in Senior con anni diversi da quelli richiesti per essere in questa categoria ed effettuare l'inserimento nella categoria corretta.
+
+
+**ScattiCarrieraS.SQL**
+
+```
+CREATE TRIGGER "ScattiCarrieraS"
+    AFTER UPDATE OF anni_servizio
+    ON "Schema_Progetto".senior
+    FOR EACH ROW
+    WHEN (NEW.anni_servizio<7)
+    EXECUTE FUNCTION "Schema_Progetto"."ProScattiS"();
+```
+
+
+Questo trigger viene eseguito dopo aver aggiornato il valore degli anni su Senior con la condizione che il nuovo valore degli anni sia $<$7(quindi diversi da quelli richiesti per essere nella categoria Senior)ed esegue la procedura ProScattiS.
+
+**ProScattiS.SQL**
+
+
+```
+CREATE FUNCTION "Schema_Progetto"."ProScattiS"()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+     NOT LEAKPROOF
+AS 
+$$
+DECLARE
+sql_smt VARCHAR(200);
+cursore1 refcursor;
+dirigente_trovato "Schema_Progetto"."dirigente".cf%TYPE;
+lab_trovato "Schema_Progetto"."laboratorio".cod_lab%TYPE;
+tmp_trovato "Schema_Progetto"."dirigente".cf%TYPE;
+tmp2_trovato "Schema_Progetto"."laboratorio".cod_lab%TYPE;
+
+
+
+BEGIN
+sql_smt:='CREATE TABLE "Schema_Progetto".TMP
+( Cod_Dirigente "Schema_Progetto"."CodiceF",
+CONSTRAINT TMP_PK PRIMARY KEY(Cod_Dirigente)
+) ';
+EXECUTE sql_smt;
+sql_smt:='CREATE TABLE "Schema_Progetto".TMP2
+( Cod_Lab "Schema_Progetto"."CodiceL",
+CONSTRAINT TMP2_PK PRIMARY KEY(Cod_Lab)
+) ';
+EXECUTE sql_smt;
+IF(NEW.Anni_Servizio<3) THEN 
+
+--prima di cancellare salvare i suoi dirigenti e i suoi laboratori
+
+sql_smt='SELECT cod_dirigente FROM "Schema_Progetto".dirigenzasenior WHERE cod_senior=$1';
+OPEN cursore1 FOR  EXECUTE sql_smt USING NEW.cf;--tutti i dirigenti dell'impiegato
+LOOP
+FETCH cursore1 INTO dirigente_trovato;
+EXIT WHEN NOT FOUND;
+sql_smt='INSERT INTO "Schema_Progetto".TMP(Cod_Dirigente) VALUES($1)';
+EXECUTE sql_smt USING dirigente_trovato;
+END LOOP;
+CLOSE cursore1;
+
+
+sql_smt='SELECT cod_lab FROM "Schema_Progetto".lavorosenior WHERE cod_senior=$1';
+OPEN cursore1 FOR  EXECUTE sql_smt USING NEW.cf;--tutti i laboratori dell'impiegato
+LOOP
+FETCH cursore1 INTO lab_trovato;
+EXIT WHEN NOT FOUND;
+sql_smt='INSERT INTO "Schema_Progetto".TMP2(Cod_Lab) VALUES($1)';
+EXECUTE sql_smt USING lab_trovato;
+END LOOP;
+CLOSE cursore1;
+
+
+DELETE FROM "Schema_Progetto".senior WHERE senior.cf=NEW.cf;
+
+INSERT INTO "Schema_Progetto".junior(nome,cognome,cf,anni_servizio)
+VALUES(NEW.nome,NEW.cognome,NEW.cf,NEW.anni_servizio);
+
+
+sql_smt:='SELECT Cod_Dirigente FROM "Schema_Progetto".TMP';
+OPEN cursore1 FOR  EXECUTE sql_smt;
+LOOP
+FETCH cursore1 INTO tmp_trovato;
+EXIT WHEN NOT FOUND;
+sql_smt:='INSERT INTO "Schema_Progetto".dirigenzajunior(cod_dirigente,cod_junior) 
+VALUES($1,$2)';
+EXECUTE sql_smt USING tmp_trovato,NEW.cf;
+
+END LOOP;
+CLOSE cursore1;
+sql_smt:='SELECT Cod_Lab FROM "Schema_Progetto".TMP2';
+OPEN cursore1 FOR  EXECUTE sql_smt;
+LOOP
+FETCH cursore1 INTO tmp2_trovato;
+EXIT WHEN NOT FOUND;
+sql_smt:='INSERT INTO "Schema_Progetto".lavorojunior(cod_lab,cod_junior) 
+VALUES($1,$2)';
+EXECUTE sql_smt USING tmp2_trovato,NEW.cf;
+
+END LOOP;
+CLOSE cursore1;
+
+END IF;
+
+IF(NEW.Anni_Servizio>=3) THEN
+
+--prima di cancellare salvare i suoi dirigenti e i suoi laboratori
+
+sql_smt='SELECT cod_dirigente FROM "Schema_Progetto".dirigenzasenior WHERE cod_senior=$1';
+OPEN cursore1 FOR  EXECUTE sql_smt USING NEW.cf;--tutti i dirigenti dell'impiegato
+LOOP
+FETCH cursore1 INTO dirigente_trovato;
+EXIT WHEN NOT FOUND;
+sql_smt='INSERT INTO "Schema_Progetto".TMP(Cod_Dirigente) VALUES($1)';
+EXECUTE sql_smt USING dirigente_trovato;
+END LOOP;
+CLOSE cursore1;
+
+
+sql_smt='SELECT cod_lab FROM "Schema_Progetto".lavorosenior WHERE cod_senior=$1';
+OPEN cursore1 FOR  EXECUTE sql_smt USING NEW.cf;--tutti i laboratori dell'impiegato
+LOOP
+FETCH cursore1 INTO lab_trovato;
+EXIT WHEN NOT FOUND;
+sql_smt='INSERT INTO "Schema_Progetto".TMP2(Cod_Lab) VALUES($1)';
+EXECUTE sql_smt USING lab_trovato;
+END LOOP;
+CLOSE cursore1;
+
+
+DELETE FROM "Schema_Progetto".senior WHERE senior.cf=NEW.cf; 
+
+INSERT INTO "Schema_Progetto".middle(nome,cognome,cf,anni_servizio)
+VALUES(NEW.nome,NEW.cognome,NEW.cf,NEW.anni_servizio);
+
+
+sql_smt:='SELECT Cod_Dirigente FROM "Schema_Progetto".TMP';
+OPEN cursore1 FOR  EXECUTE sql_smt;
+LOOP
+FETCH cursore1 INTO tmp_trovato;
+EXIT WHEN NOT FOUND;
+sql_smt:='INSERT INTO "Schema_Progetto".dirigenzamiddle(cod_dirigente,cod_middle) 
+VALUES($1,$2)';
+EXECUTE sql_smt USING tmp_trovato,NEW.cf;
+
+END LOOP;
+CLOSE cursore1;
+sql_smt:='SELECT Cod_Lab FROM "Schema_Progetto".TMP2';
+OPEN cursore1 FOR  EXECUTE sql_smt;
+LOOP
+FETCH cursore1 INTO tmp2_trovato;
+EXIT WHEN NOT FOUND;
+sql_smt:='INSERT INTO "Schema_Progetto".lavoromiddle(cod_lab,cod_middle) 
+VALUES($1,$2)';
+EXECUTE sql_smt USING tmp2_trovato,NEW.cf;
+
+END LOOP;
+CLOSE cursore1;
+
+
+END IF;
+sql_smt:='DROP TABLE "Schema_Progetto".TMP,"Schema_Progetto".TMP2';
+EXECUTE sql_smt;
+
+
+RETURN NEW;
+END;
+$$;
+
+ALTER FUNCTION "Schema_Progetto"."ProScattiS"()
+    OWNER TO postgres;
+```
+
+
+
+Questa procedura funziona nel seguente modo:
+Vengono create due tabelle temporanee chiamate TMP(la quale conterrà i codici dei dirigenti che dirigono l'impiegato in questione) e TMP2(la quale conterrà i codici dei laboratori dove l'impiegato lavora).Queste tabelle sono fondamentali per ciò che deve fare la procedura perchè si dovrà cancellare dalla tabella Senior la tupla dell'impiegato che effettua uno scatto di carriera per crearne una nuova nella categoria dove è stato inserito dopo lo scatto di carriera.Senza le tabelle TMP e TMP2 si andrebbero a perdere i valori contenuti nelle tuple delle tabelle dirigenzasenior e lavorosenior legate all'impiegato che effettua lo scatto.
+Verrà poi controllato il nuovo valore degli anni e se sono meno di 3 lo scatto sarà effettuato verso la categoria junior mentre se sono almeno 3 lo scatto sarà effettuato verso la categoria middle(non è possibile avere scatti verso dirigente perchè è l'unica categoria senza un obbligo temporale).
+Dopo aver controllato gli anni si effettueranno le stesse operazioni(cambierà solo la categoria di tabelle dove inserire nuove tuple)si effettua una query che seleziona i dirigenti dell'impiegato che ha attivato il trigger e tramite un loop vengono inseriti nella tabella TMP.La stessa operazione viene effettuata per i laboratori dove l'impiegato lavora e sono inseriti nella tabella TMP2.
+Ora viene effettuata la cancellazione della tupla di Senior che contiene i dati dell'impiegato che ha attivato il trigger(le tabelle dirigenzasenior e lavorosenior hanno chiavi esterne con azione ON UPDATE CASCADE  e ON DELETE CASCADE quindi vengono cancellate delle tuple anche in queste due tabelle).
+In base al valore degli anni di servizio dell'impiegato quest'ultima parte di codice andrà ad inserire valori nelle tabelle legate a Junior o Middle.(per comodità viene indicato con Categoria ogni categoria diversa da quella di partenza dell'impiegato per evitare ridondanza nella descrizione di questa parte di codice)
+Quindi verranno inserite tramite delle query (ed anche  dei loop nel caso delle tabelle dirigenzaCategoria e lavoroCategoria visto che potrebbero esserci multipli inserimenti)nuove tuple in Categoria,dirigenzaCategoria e lavoroCategoria, le quali conterranno esattamente gli stessi valori che erano presenti in Senior,dirigenzasenior e lavorosenior prima che venisse eliminato l'impiegato Senior che ha attivato il trigger.
+Dopo aver inserito questi nuovi dati  si effettuerà come ultima operazione la cancellazione delle due tabelle temporanee TMP e TMP2.
+Quindi lo scopo di questo trigger è gestire la variazione di categoria di un impiegato Senior dovuta all'aggiornamento del valore degli anni di servizio tramite l'inserimento di dati legati ad esso nelle tabelle legate alla sua nuova categoria.
+
+
+
+
