@@ -483,7 +483,7 @@ CREATE TRIGGER "ScattiCarrieraJ"
 ```
 
 
-Questo trigger viene eseguito dopo aver aggiornato il valore degli anni su Junior con la condizione che il nuovo valore degli anni sia $\geq$3(quindi diversi da quelli richiesti per essere nella categoria Junior)ed esegue la procedura ProScattiJ.
+Questo trigger viene eseguito dopo aver aggiornato il valore degli anni su Junior con la condizione che il nuovo valore degli anni sia >=3(quindi diversi da quelli richiesti per essere nella categoria Junior)ed esegue la procedura ProScattiJ.
 
 **ProScattiJ.SQL**
 
@@ -647,7 +647,7 @@ Vengono create due tabelle temporanee chiamate TMP(la quale conterrà i codici d
 Verrà poi controllato il nuovo valore degli anni e se sono meno di 7 lo scatto sarà effettuato verso la categoria middle mentre se sono almeno 7 lo scatto sarà effettuato verso la categoria senior(non è possibile avere scatti verso dirigente perchè è l'unica categoria senza un obbligo temporale).
 Dopo aver controllato gli anni si effettueranno le stesse operazioni(cambierà solo la categoria di tabelle dove inserire nuove tuple)si effettua una query che seleziona i dirigenti dell'impiegato che ha attivato il trigger e tramite un loop vengono inseriti nella tabella TMP.La stessa operazione viene effettuata per i laboratori dove l'impiegato lavora e sono inseriti nella tabella TMP2.
 Ora viene effettuata la cancellazione della tupla di Junior che contiene i dati dell'impiegato che ha attivato il trigger(le tabelle dirigenzajunior e lavorojunior hanno chiavi esterne con azione ON UPDATE CASCADE  e ON DELETE CASCADE quindi vengono cancellate delle tuple anche in queste due tabelle).
-In base al valore degli anni di servizio dell'impiegato quest'ultima parte di codice andrà ad inserire valori nelle tabelle legate a Middle o Senior.\newline(per comodità viene indicato con <<Categoria>> ogni categoria diversa da quella di partenza dell'impiegato per evitare ridondanza nella descrizione di questa parte di codice)
-Quindi verranno inserite tramite delle query (ed anche  dei loop nel caso delle tabelle dirigenza<<Categoria>> e lavoro<<Categoria>> visto che potrebbero esserci multipli inserimenti)nuove tuple in <<Categoria>>,dirigenza<<Categoria>> e lavoro<<Categoria>>, le quali conterranno esattamente gli stessi valori che erano presenti in Junior,dirigenzajunior e lavorojunior prima che veniva eliminato l'impiegato Junior che ha attivato il trigger.
+In base al valore degli anni di servizio dell'impiegato quest'ultima parte di codice andrà ad inserire valori nelle tabelle legate a Middle o Senior.\newline(per comodità viene indicato con Categoria ogni categoria diversa da quella di partenza dell'impiegato per evitare ridondanza nella descrizione di questa parte di codice)
+Quindi verranno inserite tramite delle query (ed anche  dei loop nel caso delle tabelle dirigenzaCategoria e lavoroCategoria visto che potrebbero esserci multipli inserimenti)nuove tuple in Categoria,dirigenzaCategoria e lavoroCategoria, le quali conterranno esattamente gli stessi valori che erano presenti in Junior,dirigenzajunior e lavorojunior prima che veniva eliminato l'impiegato Junior che ha attivato il trigger.
 Dopo aver inserito questi nuovi dati  si effettuerà come ultima operazione la cancellazione delle due tabelle temporanee TMP e TMP2.
 Quindi lo scopo di questo trigger è gestire la variazione di categoria di un impiegato Junior dovuta all'aggiornamento del valore degli anni di servizio tramite l'inserimento di dati legati ad esso nelle tabelle legate alla sua nuova categoria.
