@@ -430,3 +430,14 @@ ALTER FUNCTION "Schema_Progetto"."ProControlloJunior"()
    Questa procedura verifica tramite delle semplici query se esiste un impiegato di una categoria diversa da Junior ma con lo stesso codice fiscale.
 Se viene trovato un'impiegato di un altra categoria ma con lo stesso cf che si vorrebbe inserire in Junior(il trigger è before insert quindi per ora non c'è ancora una tupla in Junior con il NEW.cf)allora avviene un eccezione che stampa il messaggio:Codice Fiscale già presente.
 Quindi lo scopo di questo trigger è di verificare l'unicità del codice fiscale che si vuole inserire in Junior.
+
+
+**InsJ.SQL**
+```
+CREATE TRIGGER "InsJunior"
+    AFTER INSERT ON "Schema_Progetto".junior
+    FOR EACH ROW
+	WHEN(NEW.anni_servizio>=3)
+    EXECUTE FUNCTION "Schema_Progetto"."ProInsJunior"();
+```
+Questo trigger viene eseguito dopo l'inserimento su Junior con la condizione che gli anni inseriti siano >= 3(quindi quando gli anni di servizio del impiegato Junior sono diversi da quelli richiesti per essere nella sua categoria) ed esegue la procedura ProInsJunior.
