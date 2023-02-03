@@ -1270,5 +1270,77 @@ Se viene trovato un'impiegato di un altra categoria ma con lo stesso cf che si v
 Quindi lo scopo di questo trigger è di verificare l'unicità del codice fiscale che si vuole inserire in Dirigente.
 
 
+**ControlloLavoraSu.SQL**
 
+
+```
+CREATE TRIGGER "ControlloLavoraSu"
+    BEFORE INSERT ON "Schema_Progetto".lavora_su
+    FOR EACH ROW
+    EXECUTE FUNCTION "Schema_Progetto"."ProControlloLavoraSu"();
+```
+
+Questo trigger viene eseguito prima dell'inserimento su LavoraSu ed esegue la procedura ProControlloLavoraSu
+
+
+**ProControlloLavoraSu.SQL**
+
+```
+CREATE FUNCTION "Schema_Progetto"."ProControlloLavoraSu"()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+     NOT LEAKPROOF
+AS 
+$$
+DECLARE  
+num_labs INTEGER;
+
+BEGIN
+SELECT "Schema_Progetto".checklavorasu(NEW.cup,NEW.nome) INTO num_labs;
+IF num_labs=3 THEN 
+RAISE EXCEPTION 'Impossibile inserire laboratori a lavorare su questo progetto:Capienza massima raggiunta 'USING ERRCODE='unique_violation';
+END IF;
+
+RETURN NEW;
+END;
+$$;
+
+ALTER FUNCTION "Schema_Progetto"."ProControlloLavoraSu"()
+    OWNER TO postgres;
+```
+
+Questa procedura chiama la funzione checklavorasu  usando come parametri il cup ed il nome del progetto che si vuole inserire su lavorasu.
+La funzione checklavorasu ha come parametri un cup ed un nome e restituisce un valore intero che rappresenta il numero di laboratori che lavorano ad un progetto.
+Dopo aver ottenuto un valore di ritorno da checklavorasu lo si confronta con 3 e se la condizione è vera allora avviene un eccezione che stampa il messaggio:Impossibile inserire laboratori a lavorare su questo progetto:Capienza massima raggiunta .
+Questo trigger permette di avere il seguente vincolo che era stato richiesto dalla traccia:Al massimo 3 laboratori possono lavorare ad un progetto.
+
+**Checklavorasu.SQL**
+
+```
+CREATE FUNCTION "Schema_Progetto".checklavorasu(IN input_cup "Schema_Progetto"."CodiceP",IN input_nome VARCHAR(20))
+    RETURNS integer
+   LANGUAGE 'plpgsql'
+     NOT LEAKPROOF
+AS    
+$$
+DECLARE 
+
+sql_smt VARCHAR(500);
+cup_trovato "Schema_Progetto"."progetto"."cup"%TYPE;
+nome_trovato "Schema_Progetto"."progetto"."nome"%TYPE;
+num_labs INTEGER;
+
+BEGIN
+sql_smt:='SELECT COUNT(cod_lab),cup,nome FROM "Schema_Progetto".lavora_su WHERE cup=$1 AND nome=$2 GROUP BY cup,nome';
+EXECUTE sql_smt INTO num_labs,cup_trovato,nome_trovato USING input_cup,input_nome;
+return num_labs;
+END;
+$$;
+ALTER FUNCTION "Schema_Progetto".checklavorasu(IN input_cup "Schema_Progetto"."CodiceP",IN input_nome VARCHAR(20))
+    OWNER TO postgres;
+```
+
+Questa funzione ha due parametri(e sono entrambi di input):input_cup e input_nome  i quali rappresentano la chiave primaria di un progetto.
+Viene quindi effettuata una query che utilizza questi parametri per contare i codici dei laboratori che lavorano al progetto identificato dai parametri della funzione.
+Il numero dei codici di laboratorio trovati è il valore intero restituito dalla funzione.
 
