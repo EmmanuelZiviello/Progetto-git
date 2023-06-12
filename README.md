@@ -638,7 +638,7 @@ EXECUTE sql_smt;
 
 RETURN NEW;
 END;
-
+$$;
 ALTER FUNCTION "Schema_Progetto"."ProScattiJ"()
     OWNER TO postgres;
 ```
