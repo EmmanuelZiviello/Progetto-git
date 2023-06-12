@@ -254,8 +254,8 @@ Inserimento valori nella tabella Junior.
 
 **InserimentoMiddle.SQL**
 ```
-Insert INTO "Schema_Progetto".junior(cf,nome,cognome,anni_servizio)
-VALUES ('AAAAAAAA','Pippo','Rosso',2),('BBBBBBBB','Pippo','Blu',1),('CCCCCCCC','Paperino','Verde',2),('BBCDFSHL','Paperoga','Esposito',2),('BZZSDFCB','Mario','Rossi',1),('NDCLJHFS','Luca','Brosio',2);
+Insert INTO "Schema_Progetto".middle(cf,nome,cognome,anni_servizio)
+VALUES ('DDDDDDDD','Pippo','Blu',4),('EEEEEEEE','Pippo','Giallo',5),('FFFFFFFF','Paperino','Verdi',6),('DLASCEMD','Pluto','De Martini',5),('EZKLOSLK','Enrico','Papo',6),('IFGHFNSF','Qui','Fusilli',6);
 ```
 Inserimento valori nella tabella Middle.
 
