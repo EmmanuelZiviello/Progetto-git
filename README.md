@@ -767,6 +767,12 @@ Questo trigger viene eseguito dopo aver aggiornato il valore degli anni su Middl
 **ProScattiM.SQL**
 
 ```
+CREATE FUNCTION "Schema_Progetto"."ProScattiM"()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+     NOT LEAKPROOF
+AS 
+$$
 DECLARE
 sql_smt VARCHAR(200);
 cursore1 refcursor;
