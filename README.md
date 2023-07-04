@@ -1494,3 +1494,41 @@ VALUES ('JJJJJJJJ','AB'),('JJJJJJJJ','AC'),('LLLLLLLL','BD'),('WLSMT231','AB'),(
 ```
 Inserimento valori nella tabella LavoroDirigente.
 
+
+**VIEW:**
+
+È stata implementata una vista "Affiliati" che mostra il numero di affiliati in ciascun laboratorio.
+
+Codice:
+
+```
+CREATE VIEW "Schema_Progetto"."Affiliati"
+ AS
+SELECT tutto.cod_lab,
+    count(*) AS count
+   FROM ( SELECT l.cod_lab,
+            jun.cod_junior
+           FROM "Schema_Progetto".lavorojunior jun
+             JOIN "Schema_Progetto".laboratorio l ON l.cod_lab::bpchar = jun.cod_lab::bpchar
+        UNION
+         SELECT l.cod_lab,
+            mid.cod_middle
+           FROM "Schema_Progetto".lavoromiddle mid
+             JOIN "Schema_Progetto".laboratorio l ON l.cod_lab::bpchar = mid.cod_lab::bpchar
+        UNION
+         SELECT l.cod_lab,
+            sen.cod_senior
+           FROM "Schema_Progetto".lavorosenior sen
+             JOIN "Schema_Progetto".laboratorio l ON l.cod_lab::bpchar = sen.cod_lab::bpchar
+        UNION
+         SELECT l.cod_lab,
+            dir.cod_dirigente
+           FROM "Schema_Progetto".lavorodirigente dir
+             JOIN "Schema_Progetto".laboratorio l ON l.cod_lab::bpchar = dir.cod_lab::bpchar) tutto
+  GROUP BY tutto.cod_lab;
+
+ALTER TABLE "Schema_Progetto"."Affiliati"
+    OWNER TO postgres;
+
+```
+
