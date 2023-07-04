@@ -243,136 +243,7 @@ CONSTRAINT DirigenzaDirigenteFK2 FOREIGN KEY (Cod_Dirigente2) REFERENCES  "Schem
 Questo file ci permette di creare una tabella DirigenzaDirigenza nello schema creato in precedenza.La chiave primaria è composta da Cod Dirigente e da Cod Dirigente2,questi attributi sono anche chiavi esterne delle tabelle Dirigente e Dirigente(questa tabella fa da collegamento tra le due appena citate).
 Le chiavi esterne hanno azioni ON UPDATE CASCADE e ON DELETE CASCADE.
 
-**InserimentoJunior.SQL**
-```
-Insert INTO "Schema_Progetto".junior(cf,nome,cognome,anni_servizio)
-VALUES ('AAAAAAAA','Pippo','Rosso',2),('BBBBBBBB','Pippo','Blu',1),('CCCCCCCC','Paperino','Verde',2),('BBCDFSHL','Paperoga','Esposito',2),('BZZSDFCB','Mario','Rossi',1),('NDCLJHFS','Luca','Brosio',2);
-```
-Inserimento valori nella tabella Junior.
 
-
-
-**InserimentoMiddle.SQL**
-```
-Insert INTO "Schema_Progetto".middle(cf,nome,cognome,anni_servizio)
-VALUES ('DDDDDDDD','Pippo','Blu',4),('EEEEEEEE','Pippo','Giallo',5),('FFFFFFFF','Paperino','Verdi',6),('DLASCEMD','Pluto','De Martini',5),('EZKLOSLK','Enrico','Papo',6),('IFGHFNSF','Qui','Fusilli',6);
-```
-Inserimento valori nella tabella Middle.
-
-
-
-**InserimentoSenior.SQL**
-```
-Insert INTO "Schema_Progetto".senior(cf,nome,cognome,anni_servizio)
-VALUES ('GGGGGGGG','Pippo','Nero',7),('HHHHHHHH','Pippo','Bianco',9),('IIIIIIII','Paperino','Neri',10),('GABSGGGG','Gabriele','Gambero',10),('HZXDSAHH','Amhed','Blanc',9),('AXLIIXSA','Juan','Fois',10);
-```
-Inserimento valori nella tabella Senior.
-
-
-
-**InserimentoDirigente.SQL**
-```
-Insert INTO "Schema_Progetto".dirigente(cf,nome,cognome,anni_servizio)
-VALUES ('JJJJJJJJ','Minnie','Provola',1),('KKKKKKKK','Minnie','Pizza',2),('LLLLLLLL','Pippo','Pasta',8),('JKRJJJJJ','John','Provolini',8),('KVBNKASD','Luca','Brodini',1),('WLSMT231','Will','Smith',5);
-```
-Inserimento valori nella tabella Dirigente.
-
-
-**InserimentoLaboratorio.SQL**
-```
-Insert INTO "Schema_Progetto".laboratorio(cod_lab,cod_senior,topic,afferenti)
-VALUES ('AB','GGGGGGGG','Java',15),('AC','GGGGGGGG','C',4),('BD','IIIIIIII','SQL',4),('BB','GGGGGGGG','Ricerche',1),('BS','GGGGGGGG','AI',2),('BE','IIIIIIII','ChatGPT',3);
-```
-Inserimento valori nella tabella Laboratorio.
-
-
-
-**InserimentoProgetto.SQL**
-```
-Insert INTO "Schema_Progetto".progetto(cup,nome,cod_senior,cod_dirigente)
-VALUES ('AAB','Dati_P','HHHHHHHH','JJJJJJJJ'),('AAC','Prog_P','HHHHHHHH','KKKKKKKK'),('AAD','SQL_P','GGGGGGGG','LLLLLLLL'),('ZAZ','AI_P','GGGGGGGG','LLLLLLLL'),('SAC','Lux_P','HHHHHHHH','KKKKKKKK'),('SUS','GPT_P','HHHHHHHH','LLLLLLLL');
-```
-Inserimento valori nella tabella Progetto.
-
-
-
-**InserimentoLavoraSu.SQL**
-```
-INSERT INTO "Schema_Progetto".lavora_su(cod_lab,cup,nome)
-VALUES ('AB','AAB','Dati_P'),('AC','AAB','Dati_P'),('BD','AAD','SQL_P'),('BS','AAB','Dati_P'),('AB','SUS','GPT_P'),('AC','SUS','GPT_P');
-```
-Inserimento valori nella tabella LavoraSu.
-
-
-
-**InserimentoDirigenzaJunior.SQL**
-```
-Insert INTO "Schema_Progetto".dirigenzajunior(cod_dirigente,cod_junior)
-VALUES ('JJJJJJJJ','AAAAAAAA'),('JJJJJJJJ','BBBBBBBB'),('KKKKKKKK','AAAAAAAA');
-```
-Inserimento valori nella tabella DirigenzaJunior.
-
-
-
-**InserimentoDirigenzaMiddle.SQL**
-```
-Insert INTO "Schema_Progetto".dirigenzamiddle(cod_dirigente,cod_middle)
-VALUES ('LLLLLLLL','DDDDDDDD'),('LLLLLLLL','FFFFFFFF'),('JJJJJJJJ','EEEEEEEE');
-```
-Inserimento valori nella tabella DirigenzaMiddle.
-
-
-
-**InserimentoDirigenzaSenior.SQL**
-```
-Insert INTO "Schema_Progetto".dirigenzasenior(cod_dirigente,cod_senior)
-VALUES ('JJJJJJJJ','IIIIIIII'),('JJJJJJJJ','HHHHHHHH'),('KKKKKKKK','GGGGGGGG');
-```
-Inserimento valori nella tabella DirigenzaSenior.
-
-
-
-**InserimentoDirigenzaDirigente.SQL**
-```
-Insert INTO "Schema_Progetto".dirigenzadirigente(cod_dirigente,cod_dirigente2)
-VALUES ('KKKKKKKK','JJJJJJJJ'),('LLLLLLLL','JJJJJJJJ'),('KKKKKKKK','KKKKKKKK');
-```
-Inserimento valori nella tabella DirigenzaDirigente.
-
-
-
-**InserimentoLavoroJunior.SQL**
-```
-INSERT INTO "Schema_Progetto".lavorojunior(cod_junior,cod_lab)
-VALUES ('AAAAAAAA','AB'),('BBBBBBBB','AC'),('AAAAAAAA','BD'),('BZZSDFCB','BB'),('BBCDFSHL','AC'),('NDCLJHFS','AB');
-```
-Inserimento valori nella tabella LavoroJunior.
-
-
-
-**InserimentoLavoroMiddle.SQL**
-```
-INSERT INTO "Schema_Progetto".lavoromiddle(cod_middle,cod_lab)
-VALUES ('DDDDDDDD','AB'),('DDDDDDDD','AC'),('EEEEEEEE','BD'),('DDDDDDDD','BS'),('DDDDDDDD','BE'),('EEEEEEEE','AB');
-```
-Inserimento valori nella tabella LavoroMiddle.
-
-
-
-**InserimentoLavoroSenior.SQL**
-```
-INSERT INTO "Schema_Progetto".lavorosenior(cod_senior,cod_lab)
-VALUES ('GGGGGGGG','AB'),('HHHHHHHH','AB'),('GGGGGGGG','BD'),('AXLIIXSA','AB'),('HZXDSAHH','AB'),('GABSGGGG','AB');
-```
-Inserimento valori nella tabella LavoroSenior.
-
-
-**InserimentoLavoroDirigente.SQL**
-```
-INSERT INTO "Schema_Progetto".lavorodirigente(cod_dirigente,cod_lab)
-VALUES ('JJJJJJJJ','AB'),('JJJJJJJJ','AC'),('LLLLLLLL','BD'),('WLSMT231','AB'),('KVBNKASD','AB'),('JKRJJJJJ','AB');
-```
-Inserimento valori nella tabella LavoroDirigente.
 
 
 **SPIEGAZIONE TRIGGER  E PROCEDURE ANNESSE PRESENTE ANCHE NELLA DOCUMENTAZIONE ALLEGATA:**
@@ -1487,3 +1358,139 @@ CREATE TRIGGER "ControlloLavoroDirigente"
 ```
 
 Questo trigger viene eseguito prima dell'inserimento su LavoroDirigente ed esegue la procedura ProControlloLavoro.
+
+
+
+**INSERIMENTO DATI:**
+
+**InserimentoJunior.SQL**
+```
+Insert INTO "Schema_Progetto".junior(cf,nome,cognome,anni_servizio)
+VALUES ('AAAAAAAA','Pippo','Rosso',2),('BBBBBBBB','Pippo','Blu',1),('CCCCCCCC','Paperino','Verde',2),('BBCDFSHL','Paperoga','Esposito',2),('BZZSDFCB','Mario','Rossi',1),('NDCLJHFS','Luca','Brosio',2);
+```
+Inserimento valori nella tabella Junior.
+
+
+
+**InserimentoMiddle.SQL**
+```
+Insert INTO "Schema_Progetto".middle(cf,nome,cognome,anni_servizio)
+VALUES ('DDDDDDDD','Pippo','Blu',4),('EEEEEEEE','Pippo','Giallo',5),('FFFFFFFF','Paperino','Verdi',6),('DLASCEMD','Pluto','De Martini',5),('EZKLOSLK','Enrico','Papo',6),('IFGHFNSF','Qui','Fusilli',6);
+```
+Inserimento valori nella tabella Middle.
+
+
+
+**InserimentoSenior.SQL**
+```
+Insert INTO "Schema_Progetto".senior(cf,nome,cognome,anni_servizio)
+VALUES ('GGGGGGGG','Pippo','Nero',7),('HHHHHHHH','Pippo','Bianco',9),('IIIIIIII','Paperino','Neri',10),('GABSGGGG','Gabriele','Gambero',10),('HZXDSAHH','Amhed','Blanc',9),('AXLIIXSA','Juan','Fois',10);
+```
+Inserimento valori nella tabella Senior.
+
+
+
+**InserimentoDirigente.SQL**
+```
+Insert INTO "Schema_Progetto".dirigente(cf,nome,cognome,anni_servizio)
+VALUES ('JJJJJJJJ','Minnie','Provola',1),('KKKKKKKK','Minnie','Pizza',2),('LLLLLLLL','Pippo','Pasta',8),('JKRJJJJJ','John','Provolini',8),('KVBNKASD','Luca','Brodini',1),('WLSMT231','Will','Smith',5);
+```
+Inserimento valori nella tabella Dirigente.
+
+
+**InserimentoLaboratorio.SQL**
+```
+Insert INTO "Schema_Progetto".laboratorio(cod_lab,cod_senior,topic,afferenti)
+VALUES ('AB','GGGGGGGG','Java',15),('AC','GGGGGGGG','C',4),('BD','IIIIIIII','SQL',4),('BB','GGGGGGGG','Ricerche',1),('BS','GGGGGGGG','AI',2),('BE','IIIIIIII','ChatGPT',3);
+```
+Inserimento valori nella tabella Laboratorio.
+
+
+
+**InserimentoProgetto.SQL**
+```
+Insert INTO "Schema_Progetto".progetto(cup,nome,cod_senior,cod_dirigente)
+VALUES ('AAB','Dati_P','HHHHHHHH','JJJJJJJJ'),('AAC','Prog_P','HHHHHHHH','KKKKKKKK'),('AAD','SQL_P','GGGGGGGG','LLLLLLLL'),('ZAZ','AI_P','GGGGGGGG','LLLLLLLL'),('SAC','Lux_P','HHHHHHHH','KKKKKKKK'),('SUS','GPT_P','HHHHHHHH','LLLLLLLL');
+```
+Inserimento valori nella tabella Progetto.
+
+
+
+**InserimentoLavoraSu.SQL**
+```
+INSERT INTO "Schema_Progetto".lavora_su(cod_lab,cup,nome)
+VALUES ('AB','AAB','Dati_P'),('AC','AAB','Dati_P'),('BD','AAD','SQL_P'),('BS','AAB','Dati_P'),('AB','SUS','GPT_P'),('AC','SUS','GPT_P');
+```
+Inserimento valori nella tabella LavoraSu.
+
+
+
+**InserimentoDirigenzaJunior.SQL**
+```
+Insert INTO "Schema_Progetto".dirigenzajunior(cod_dirigente,cod_junior)
+VALUES ('JJJJJJJJ','AAAAAAAA'),('JJJJJJJJ','BBBBBBBB'),('KKKKKKKK','AAAAAAAA');
+```
+Inserimento valori nella tabella DirigenzaJunior.
+
+
+
+**InserimentoDirigenzaMiddle.SQL**
+```
+Insert INTO "Schema_Progetto".dirigenzamiddle(cod_dirigente,cod_middle)
+VALUES ('LLLLLLLL','DDDDDDDD'),('LLLLLLLL','FFFFFFFF'),('JJJJJJJJ','EEEEEEEE');
+```
+Inserimento valori nella tabella DirigenzaMiddle.
+
+
+
+**InserimentoDirigenzaSenior.SQL**
+```
+Insert INTO "Schema_Progetto".dirigenzasenior(cod_dirigente,cod_senior)
+VALUES ('JJJJJJJJ','IIIIIIII'),('JJJJJJJJ','HHHHHHHH'),('KKKKKKKK','GGGGGGGG');
+```
+Inserimento valori nella tabella DirigenzaSenior.
+
+
+
+**InserimentoDirigenzaDirigente.SQL**
+```
+Insert INTO "Schema_Progetto".dirigenzadirigente(cod_dirigente,cod_dirigente2)
+VALUES ('KKKKKKKK','JJJJJJJJ'),('LLLLLLLL','JJJJJJJJ'),('KKKKKKKK','KKKKKKKK');
+```
+Inserimento valori nella tabella DirigenzaDirigente.
+
+
+
+**InserimentoLavoroJunior.SQL**
+```
+INSERT INTO "Schema_Progetto".lavorojunior(cod_junior,cod_lab)
+VALUES ('AAAAAAAA','AB'),('BBBBBBBB','AC'),('AAAAAAAA','BD'),('BZZSDFCB','BB'),('BBCDFSHL','AC'),('NDCLJHFS','AB');
+```
+Inserimento valori nella tabella LavoroJunior.
+
+
+
+**InserimentoLavoroMiddle.SQL**
+```
+INSERT INTO "Schema_Progetto".lavoromiddle(cod_middle,cod_lab)
+VALUES ('DDDDDDDD','AB'),('DDDDDDDD','AC'),('EEEEEEEE','BD'),('DDDDDDDD','BS'),('DDDDDDDD','BE'),('EEEEEEEE','AB');
+```
+Inserimento valori nella tabella LavoroMiddle.
+
+
+
+**InserimentoLavoroSenior.SQL**
+```
+INSERT INTO "Schema_Progetto".lavorosenior(cod_senior,cod_lab)
+VALUES ('GGGGGGGG','AB'),('HHHHHHHH','AB'),('GGGGGGGG','BD'),('AXLIIXSA','AB'),('HZXDSAHH','AB'),('GABSGGGG','AB');
+```
+Inserimento valori nella tabella LavoroSenior.
+
+
+**InserimentoLavoroDirigente.SQL**
+```
+INSERT INTO "Schema_Progetto".lavorodirigente(cod_dirigente,cod_lab)
+VALUES ('JJJJJJJJ','AB'),('JJJJJJJJ','AC'),('LLLLLLLL','BD'),('WLSMT231','AB'),('KVBNKASD','AB'),('JKRJJJJJ','AB');
+```
+Inserimento valori nella tabella LavoroDirigente.
+
